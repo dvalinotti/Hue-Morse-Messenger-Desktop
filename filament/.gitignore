@@ -1,0 +1,5 @@
+node_modules
+bridge.json
+coverage
+dist
+.env

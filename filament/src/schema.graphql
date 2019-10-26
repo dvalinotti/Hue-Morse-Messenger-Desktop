@@ -1,0 +1,144 @@
+# The type of light hardware being used.
+enum LightGroupType {
+  LightSource
+  LightGroup
+  Luminaire
+  Room
+}
+
+# The room class of a Room light group.
+enum RoomClass {
+  LivingRoom
+  Kitchen
+  Dining
+  Bedroom
+  KidsBedroom
+  Bathroom
+  Nursery
+  Recreation
+  Office
+  Gym
+  Hallway
+  Toilet
+  FrontDoor
+  Garage
+  Terrace
+  Garden
+  Driveway
+  Carport
+  Other
+}
+
+# An arbitrary collection of lights.
+type LightGroup {
+  type: LightGroupType
+  recycle: Boolean
+  lights: [Light]
+  anyOn: Boolean
+  allOn: Boolean
+  class: String
+  name: String
+  id: ID
+  # 6-digit CSS color code. Changes when the group color is set all at once.
+  # Changing the color of one light won't affect it.
+  color: String
+}
+
+# A hue-compatible wireless bulb.
+type Light {
+  manufacturer: String
+  reachable: Boolean
+  version: String
+  model: String
+  # 6-digit CSS hex code.
+  color: String
+  name: String
+  type: String
+  on: Boolean
+  # A bridge-dependent ID used to interface with the light.
+  # May change if you register with a different bridge
+  # or restore it to factory defaults.
+  id: ID
+  # Identifies the light across multiple Hue bridges.
+  uniqueId: ID
+}
+
+type Scene {
+  # Lights affected by the scene.
+  lights: [Light]
+  # Human friendly scene title.
+  name: String
+  # False if the scene can be deleted. Otherwise, it's in use
+  # by a schedule or sensor.
+  locked: Boolean
+  owner: String
+  picture: String
+  recycle: Boolean
+  lastUpdated: String
+  version: Int
+  id: ID
+}
+
+enum HttpMethod {
+  DELETE
+  POST
+  PUT
+}
+
+type ScheduleCommand {
+  method: HttpMethod
+  address: String
+  # The JSON-stringified request body.
+  body: String
+}
+
+enum ScheduleStatus {
+  enabled
+  disabled
+}
+
+type Schedule {
+  command: ScheduleCommand
+  status: ScheduleStatus
+  description: String
+  localTime: String
+  recycle: Boolean
+  created: String
+  name: String
+  time: String
+  id: ID
+}
+
+type Query {
+  group(id: ID!): LightGroup
+  groups: [LightGroup]
+  light(id: ID!): Light
+  lights: [Light]
+  scene(id: ID!): Scene
+  scenes: [Scene]
+  schedules: [Schedule]
+  schedule(id: ID!): Schedule
+}
+
+input LightState {
+  transition: Int
+  color: String
+  on: Boolean
+}
+
+input LightAttributes {
+  name: String
+}
+
+input LightGroupAttributes {
+  name: String
+  class: RoomClass
+  lights: [ID!]
+}
+
+type Mutation {
+  setGroupState(id: ID!, state: LightState!): LightGroup
+  setLightState(id: ID!, state: LightState!): Light
+  setLightAttributes(id: ID!, attributes: LightAttributes!): Light
+  setGroupAttributes(id: ID!, attributes: LightGroupAttributes!): LightGroup
+}

@@ -4,10 +4,6 @@
 /node_modules
 /.pnp
 .pnp.js
-
-electron/node_modules
-electron/build
-filament/node_modules
 api/node_modules
 
 # testing
